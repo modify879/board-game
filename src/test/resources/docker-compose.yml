@@ -9,9 +9,9 @@ services:
       - POSTGRES_PASSWORD=*game*
       - TZ=Asia/Seoul
     ports:
-      - '5432'
+      - '15432:5432'
 
   redis:
     image: redis:7.2.3
     ports:
-      - '6379'
+      - '16379:6379'

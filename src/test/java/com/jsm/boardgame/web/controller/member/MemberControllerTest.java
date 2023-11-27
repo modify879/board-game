@@ -4,7 +4,7 @@ import com.jsm.boardgame.entity.rds.member.Member;
 import com.jsm.boardgame.exception.ErrorCodeType;
 import com.jsm.boardgame.repository.rds.member.MemberRepository;
 import com.jsm.boardgame.web.controller.support.AcceptanceTest;
-import com.jsm.boardgame.web.dto.request.member.CreateMemberRequest;
+import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.ExtractableResponse;
@@ -73,7 +73,7 @@ class MemberControllerTest extends AcceptanceTest {
         @Test
         void 회원을_생성한다() {
             // given
-            CreateMemberRequest request = CreateMemberRequest.builder()
+            CreateMemberRequestDto request = CreateMemberRequestDto.builder()
                     .username("testUsername")
                     .password("testPassword123")
                     .rePassword("testPassword123")
@@ -107,7 +107,7 @@ class MemberControllerTest extends AcceptanceTest {
                     .point(0)
                     .build());
 
-            CreateMemberRequest request = CreateMemberRequest.builder()
+            CreateMemberRequestDto request = CreateMemberRequestDto.builder()
                     .username(username)
                     .password("testPassword123")
                     .rePassword("testPassword123")
@@ -145,7 +145,7 @@ class MemberControllerTest extends AcceptanceTest {
                     .point(0)
                     .build());
 
-            CreateMemberRequest request = CreateMemberRequest.builder()
+            CreateMemberRequestDto request = CreateMemberRequestDto.builder()
                     .username("testUsername")
                     .password("testPassword123")
                     .rePassword("testPassword123")

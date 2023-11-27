@@ -1,7 +1,7 @@
 package com.jsm.boardgame.web.controller.member;
 
 import com.jsm.boardgame.service.member.MemberService;
-import com.jsm.boardgame.web.dto.request.member.CreateMemberRequest;
+import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    public ResponseEntity<Void> createMember(@Valid @RequestBody CreateMemberRequest request) {
-        memberService.createMember(request);
+    public ResponseEntity<Void> createMember(@Valid @RequestBody CreateMemberRequestDto requestDto) {
+        memberService.createMember(requestDto);
         return ResponseEntity.ok().build();
     }
 

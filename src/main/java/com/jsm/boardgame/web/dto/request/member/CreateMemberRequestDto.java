@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @NoArgsConstructor
 @Getter
-public class CreateMemberRequest {
+public class CreateMemberRequestDto {
 
     @NotNull(message = "아이디를 입력하세요.")
     @NotBlank(message = "아이디를 입력하세요.")
@@ -40,7 +40,7 @@ public class CreateMemberRequest {
     private String profile;
 
     @Builder
-    public CreateMemberRequest(String username, String password, String rePassword, String nickname, String profile) {
+    public CreateMemberRequestDto(String username, String password, String rePassword, String nickname, String profile) {
         this.username = username;
         this.password = password;
         this.rePassword = rePassword;
