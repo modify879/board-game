@@ -1,5 +1,7 @@
 package com.jsm.boardgame.web.controller.auth;
 
+import com.jsm.boardgame.common.jwt.AuthToken;
+import com.jsm.boardgame.common.jwt.AuthTokenProvider;
 import com.jsm.boardgame.entity.rds.member.Member;
 import com.jsm.boardgame.entity.redis.auth.LoginAuthToken;
 import com.jsm.boardgame.exception.ErrorCodeType;
@@ -31,6 +33,9 @@ class AuthControllerTest extends AcceptanceTest {
     @Autowired
     private LoginAuthTokenRepository loginAuthTokenRepository;
 
+    @Autowired
+    private AuthTokenProvider authTokenProvider;
+
     @Nested
     class login {
 
@@ -40,7 +45,7 @@ class AuthControllerTest extends AcceptanceTest {
             String username = "testUsername";
             String password = "testPassword";
 
-            createMember(username, password);
+            Member member = createMember(username, password);
             LoginRequestDto requestDto = LoginRequestDto.builder()
                     .username(username)
                     .password(password)
@@ -58,7 +63,9 @@ class AuthControllerTest extends AcceptanceTest {
             String accessToken = jsonPath.getString("accessToken");
             String refreshToken = jsonPath.getString("refreshToken");
 
-            LoginAuthToken loginAuthToken = loginAuthTokenRepository.findAll().iterator().next();
+            AuthToken authToken = authTokenProvider.convertAuthToken(accessToken);
+
+            LoginAuthToken loginAuthToken = loginAuthTokenRepository.findById(member.getId() + ":" + authToken.getIdentifier()).orElseThrow();
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -66,9 +73,12 @@ class AuthControllerTest extends AcceptanceTest {
             assertThat(accessToken).isNotBlank();
             assertThat(refreshToken).isNotBlank();
 
-            assertThat(loginAuthToken.getMemberId()).isNotNull();
-            assertThat(loginAuthToken.getLoginToken().getAccessToken()).isEqualTo(accessToken);
-            assertThat(loginAuthToken.getLoginToken().getRefreshToken()).isEqualTo(refreshToken);
+            assertThat(loginAuthToken.getMemberId()).isEqualTo(member.getId());
+            assertThat(loginAuthToken.getKey()).isEqualTo(member.getId() + ":" + authToken.getIdentifier());
+            assertThat(loginAuthToken.getMemberId()).isEqualTo(member.getId());
+            assertThat(loginAuthToken.getIdentifier()).isEqualTo(authToken.getIdentifier());
+            assertThat(loginAuthToken.getAccessToken()).isEqualTo(accessToken);
+            assertThat(loginAuthToken.getRefreshToken()).isEqualTo(refreshToken);
             assertThat(loginAuthToken.getExpirySeconds()).isNotZero();
         }
 
@@ -127,8 +137,8 @@ class AuthControllerTest extends AcceptanceTest {
             assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.NOT_MATCH_PASSWORD.getMessage());
         }
 
-        private void createMember(String username, String password) {
-            memberRepository.save(Member.builder()
+        private Member createMember(String username, String password) {
+            return memberRepository.save(Member.builder()
                     .username(username)
                     .password(passwordEncoder.encode(password))
                     .nickname("testNickname")

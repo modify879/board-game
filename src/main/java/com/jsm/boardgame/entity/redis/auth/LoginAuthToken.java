@@ -1,6 +1,5 @@
 package com.jsm.boardgame.entity.redis.auth;
 
-import com.jsm.boardgame.web.dto.response.auth.LoginTokenResponseDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,17 +14,26 @@ import org.springframework.data.redis.core.TimeToLive;
 public class LoginAuthToken {
 
     @Id
+    private String key;
+
     private Long memberId;
 
-    private LoginTokenResponseDto loginToken;
+    private String identifier;
+
+    private String accessToken;
+
+    private String refreshToken;
 
     @TimeToLive
     private long expirySeconds;
 
     @Builder
-    public LoginAuthToken(Long memberId, LoginTokenResponseDto loginToken, long expirySeconds) {
+    public LoginAuthToken(String key, Long memberId, String identifier, String accessToken, String refreshToken, long expirySeconds) {
+        this.key = key;
         this.memberId = memberId;
-        this.loginToken = loginToken;
+        this.identifier = identifier;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.expirySeconds = expirySeconds;
     }
 }

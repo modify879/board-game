@@ -11,7 +11,9 @@ import com.jsm.boardgame.repository.redis.auth.LoginAuthTokenRepository;
 import com.jsm.boardgame.web.dto.request.auth.LoginRequestDto;
 import com.jsm.boardgame.web.dto.response.auth.LoginTokenResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
     private final LoginAuthTokenRepository loginAuthTokenRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Value("${security.jwt.refresh.expiry-seconds}")
     long refreshExpirySeconds;
@@ -38,15 +41,20 @@ public class AuthService {
         }
 
         AuthToken authToken = authTokenProvider.createAuthToken(member);
-        LoginTokenResponseDto responseDto = new LoginTokenResponseDto(authToken.getToken(), authToken.getToken());
+        String accessToken = authToken.getToken();
+        String refreshToken = RandomStringUtils.randomAlphanumeric(256);
+
         loginAuthTokenRepository.save(
                 LoginAuthToken.builder()
+                        .key(member.getId() + ":" + authToken.getIdentifier())
                         .memberId(member.getId())
-                        .loginToken(responseDto)
+                        .identifier(authToken.getIdentifier())
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
                         .expirySeconds(refreshExpirySeconds)
                         .build()
         );
 
-        return responseDto;
+        return new LoginTokenResponseDto(accessToken, refreshToken);
     }
 }
