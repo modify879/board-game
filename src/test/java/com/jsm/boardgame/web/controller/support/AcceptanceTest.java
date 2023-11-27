@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -27,6 +28,9 @@ public abstract class AcceptanceTest {
     @Autowired
     protected DatabaseCleaner databaseCleaner;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
     static final DockerComposeContainer DOCKER_COMPOSE_CONTAINER;
 
     static {
@@ -44,5 +48,6 @@ public abstract class AcceptanceTest {
     @AfterEach
     void tearDown() {
         databaseCleaner.execute();
+        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
     }
 }

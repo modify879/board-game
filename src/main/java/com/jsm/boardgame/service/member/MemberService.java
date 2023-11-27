@@ -3,7 +3,7 @@ package com.jsm.boardgame.service.member;
 import com.jsm.boardgame.exception.ApiException;
 import com.jsm.boardgame.exception.ErrorCodeType;
 import com.jsm.boardgame.repository.rds.member.MemberRepository;
-import com.jsm.boardgame.web.dto.request.member.CreateMemberRequest;
+import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void createMember(CreateMemberRequest request) {
+    public void createMember(CreateMemberRequestDto request) {
         if (!request.checkPassword()) {
             throw new ApiException(ErrorCodeType.PASSWORD_NOT_CORRECT);
         }
