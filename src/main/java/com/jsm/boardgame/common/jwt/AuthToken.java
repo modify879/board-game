@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -24,6 +26,19 @@ public class AuthToken {
     public AuthToken(SecretKey secretKey, Member member, String identifier, long expirySeconds) {
         this.secretKey = secretKey;
         this.token = createAuthToken(member, identifier, expirySeconds);
+    }
+
+    public boolean validate() {
+        try {
+            Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String createAuthToken(Member member, String identifier, long expirySeconds) {
@@ -61,6 +76,31 @@ public class AuthToken {
                     .get(IDENTIFIER, String.class);
         } catch (ExpiredJwtException e) {
             return e.getClaims().get(IDENTIFIER, String.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getRedisKey() {
+        return getMemberId() + ":" + getIdentifier();
+    }
+
+    public LocalDateTime getExpiration() {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getExpiration()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
         } catch (Exception e) {
             return null;
         }

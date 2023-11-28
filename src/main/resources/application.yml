@@ -26,4 +26,6 @@ security:
     secret-key: 'EW0xlmBw6ne6zYpUPveFjrG0xrOx2Ja8I9XIFFVdEIiyeFcklfedsHX9lM8RvT0Q'
     expiry-seconds: 3600
     refresh:
+      length: 256
       expiry-seconds: 604800
+      deadline-days: 6
