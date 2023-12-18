@@ -1,5 +1,8 @@
 package com.jsm.boardgame.web.controller.support;
 
+import com.jsm.boardgame.common.jwt.AuthToken;
+import com.jsm.boardgame.common.jwt.AuthTokenProvider;
+import com.jsm.boardgame.entity.rds.member.Member;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +34,9 @@ public abstract class AcceptanceTest {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private AuthTokenProvider authTokenProvider;
+
     static final DockerComposeContainer DOCKER_COMPOSE_CONTAINER;
 
     static {
@@ -49,5 +55,9 @@ public abstract class AcceptanceTest {
     void tearDown() {
         databaseCleaner.execute();
         redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+    }
+
+    protected AuthToken getAuthToken(Member member) {
+        return authTokenProvider.createAuthToken(member);
     }
 }

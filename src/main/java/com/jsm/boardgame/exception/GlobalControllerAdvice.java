@@ -17,7 +17,6 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(ApiException.class)
     protected ResponseEntity<ApiErrorResponse> handlerApiException(ApiException e) {
         Throwable throwable = e.getCause();
-        e.printStackTrace();
         if (throwable != null) {
             log.error(throwable.getMessage(), e);
         }

@@ -1,9 +1,13 @@
 package com.jsm.boardgame.service.member;
 
+import com.jsm.boardgame.entity.rds.member.Member;
 import com.jsm.boardgame.exception.ApiException;
 import com.jsm.boardgame.exception.ErrorCodeType;
 import com.jsm.boardgame.repository.rds.member.MemberRepository;
 import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +23,7 @@ public class MemberService {
     @Transactional
     public void createMember(CreateMemberRequestDto request) {
         if (!request.checkPassword()) {
-            throw new ApiException(ErrorCodeType.PASSWORD_NOT_CORRECT);
+            throw new ApiException(ErrorCodeType.PASSWORD_NOT_EQUAL);
         }
 
         if (existsUsername(request.getUsername())) {
@@ -41,5 +45,30 @@ public class MemberService {
     @Transactional(readOnly = true)
     public boolean existsNickname(String nickname) {
         return memberRepository.existsByNickname(nickname);
+    }
+
+    @Transactional
+    public void updateNickname(Long memberId, UpdateNicknameRequestDto requestDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND));
+        member.updateNickname(requestDto.getNickname());
+    }
+
+    @Transactional
+    public void updatePassword(Long memberId, UpdatePasswordRequestDto requestDto) {
+        if (!requestDto.checkPassword()) {
+            throw new ApiException(ErrorCodeType.PASSWORD_NOT_EQUAL);
+        }
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND));
+        member.updatePassword(passwordEncoder.encode(requestDto.getPassword()));
+    }
+
+    @Transactional
+    public void updateProfile(Long memberId, UpdateProfileRequestDto requestDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND));
+        member.updateProfile(requestDto.getProfile());
     }
 }
