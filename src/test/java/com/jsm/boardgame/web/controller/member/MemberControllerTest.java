@@ -4,10 +4,7 @@ import com.jsm.boardgame.entity.rds.member.Member;
 import com.jsm.boardgame.exception.ErrorCodeType;
 import com.jsm.boardgame.repository.rds.member.MemberRepository;
 import com.jsm.boardgame.web.controller.support.AcceptanceTest;
-import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
+import com.jsm.boardgame.web.dto.request.member.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -308,9 +305,15 @@ class MemberControllerTest extends AcceptanceTest {
                     .role(Member.Role.MEMBER)
                     .build());
 
+            ExistsNicknameRequestDto requestDto = ExistsNicknameRequestDto.builder()
+                    .nickname(nickname)
+                    .build();
+
             // when
             ExtractableResponse<Response> response = RestAssured.given().log().all()
-                    .when().get("/api/v1/member/exists/nickname?nickname={nickname}", nickname)
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().get("/api/v1/member/exists/nickname")
                     .then().log().all()
                     .extract();
 
@@ -324,9 +327,15 @@ class MemberControllerTest extends AcceptanceTest {
             // given
             String nickname = "testNickname";
 
+            ExistsNicknameRequestDto requestDto = ExistsNicknameRequestDto.builder()
+                    .nickname(nickname)
+                    .build();
+
             // when
             ExtractableResponse<Response> response = RestAssured.given().log().all()
-                    .when().get("/api/v1/member/exists/nickname?nickname={nickname}", nickname)
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().get("/api/v1/member/exists/nickname")
                     .then().log().all()
                     .extract();
 
@@ -353,9 +362,15 @@ class MemberControllerTest extends AcceptanceTest {
                     .role(Member.Role.MEMBER)
                     .build());
 
+            ExistsUsernameRequestDto requestDto = ExistsUsernameRequestDto.builder()
+                    .username(username)
+                    .build();
+
             // when
             ExtractableResponse<Response> response = RestAssured.given().log().all()
-                    .when().get("/api/v1/member/exists/username?username={username}", username)
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().get("/api/v1/member/exists/username")
                     .then().log().all()
                     .extract();
 
@@ -369,9 +384,15 @@ class MemberControllerTest extends AcceptanceTest {
             // given
             String username = "testUsername";
 
+            ExistsUsernameRequestDto requestDto = ExistsUsernameRequestDto.builder()
+                    .username(username)
+                    .build();
+
             // when
             ExtractableResponse<Response> response = RestAssured.given().log().all()
-                    .when().get("/api/v1/member/exists/username?username={username}", username)
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().get("/api/v1/member/exists/username")
                     .then().log().all()
                     .extract();
 

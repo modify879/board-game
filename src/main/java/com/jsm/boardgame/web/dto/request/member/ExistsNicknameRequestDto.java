@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class UpdateNicknameRequestDto {
+public class ExistsNicknameRequestDto {
 
     @NotNull(message = "닉네임을 입력하세요.")
     @NotBlank(message = "닉네임을 입력하세요.")
@@ -17,7 +17,7 @@ public class UpdateNicknameRequestDto {
     private String nickname;
 
     @Builder
-    public UpdateNicknameRequestDto(String nickname) {
+    public ExistsNicknameRequestDto(String nickname) {
         this.nickname = nickname;
     }
 }

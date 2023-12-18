@@ -31,11 +31,9 @@ public class CreateMemberRequestDto {
 
     @NotNull(message = "닉네임을 입력하세요.")
     @NotBlank(message = "닉네임을 입력하세요.")
-    @Size(min = 2, max = 15, message = "비밀번호는 {min}~{max}자 이내로 입력하세요.")
+    @Size(min = 2, max = 15, message = "닉네임은 {min}~{max}자 이내로 입력하세요.")
     private String nickname;
 
-    @NotNull(message = "닉네임을 입력하세요.")
-    @NotBlank(message = "닉네임을 입력하세요.")
     @URL(message = "올바른 URL 형식이 아닙니다.")
     private String profile;
 
