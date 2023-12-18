@@ -7,6 +7,7 @@ import com.jsm.boardgame.web.controller.support.AcceptanceTest;
 import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -28,6 +29,80 @@ class MemberControllerTest extends AcceptanceTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Nested
+    class updateProfile {
+
+        @Test
+        void 프로필을_변경한다() {
+            // given
+            String changeProfile = "http://localhost:8080/changeProfile.jpg";
+
+            Member member = memberRepository.save(Member.builder()
+                    .username("testUsername")
+                    .password("testPassword")
+                    .nickname("testNickname")
+                    .profile("http://localhost:8080/testProfile.jpg")
+                    .point(0)
+                    .role(Member.Role.MEMBER)
+                    .build());
+
+            UpdateProfileRequestDto requestDto = UpdateProfileRequestDto.builder()
+                    .profile(changeProfile)
+                    .build();
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .auth().oauth2(getAuthToken(member).getToken())
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().put("/api/v1/member/profile")
+                    .then().log().all()
+                    .extract();
+
+            Member getMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+            assertThat(getMember.getProfile()).isEqualTo(changeProfile);
+        }
+
+        @Test
+        void 존재하지_않는_회원이다() {
+            // given
+            String changeProfile = "http://localhost:8080/changeProfile.jpg";
+
+            Member member = memberRepository.save(Member.builder()
+                    .username("testUsername")
+                    .password("testPassword")
+                    .nickname("testNickname")
+                    .profile("http://localhost:8080/testProfile.jpg")
+                    .point(0)
+                    .role(Member.Role.MEMBER)
+                    .build());
+            memberRepository.delete(member);
+
+            UpdateProfileRequestDto requestDto = UpdateProfileRequestDto.builder()
+                    .profile(changeProfile)
+                    .build();
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .auth().oauth2(getAuthToken(member).getToken())
+                    .contentType(ContentType.JSON)
+                    .body(requestDto)
+                    .when().put("/api/v1/member/profile")
+                    .then().log().all()
+                    .extract();
+
+            JsonPath jsonPath = response.jsonPath();
+
+            // then
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
+        }
+    }
 
     @Nested
     class updatePassword {

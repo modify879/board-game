@@ -7,6 +7,7 @@ import com.jsm.boardgame.repository.rds.member.MemberRepository;
 import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,5 +63,12 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND));
         member.updatePassword(passwordEncoder.encode(requestDto.getPassword()));
+    }
+
+    @Transactional
+    public void updateProfile(Long memberId, UpdateProfileRequestDto requestDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND));
+        member.updateProfile(requestDto.getProfile());
     }
 }

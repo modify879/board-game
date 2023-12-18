@@ -5,6 +5,7 @@ import com.jsm.boardgame.service.member.MemberService;
 import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
 import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
+import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,12 @@ public class MemberController {
     @PutMapping("/password")
     public ResponseEntity<Void> updatePassword(@LoginMember Long memberId, @Valid @RequestBody UpdatePasswordRequestDto requestDto) {
         memberService.updatePassword(memberId, requestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@LoginMember Long memberId, @Valid @RequestBody UpdateProfileRequestDto requestDto) {
+        memberService.updateProfile(memberId, requestDto);
         return ResponseEntity.ok().build();
     }
 }
