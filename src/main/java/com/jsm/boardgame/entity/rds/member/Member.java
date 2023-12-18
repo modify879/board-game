@@ -53,6 +53,10 @@ public class Member extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum Role implements EnumCodeType {
