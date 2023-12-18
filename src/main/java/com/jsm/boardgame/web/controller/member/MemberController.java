@@ -2,10 +2,7 @@ package com.jsm.boardgame.web.controller.member;
 
 import com.jsm.boardgame.config.security.LoginMember;
 import com.jsm.boardgame.service.member.MemberService;
-import com.jsm.boardgame.web.dto.request.member.CreateMemberRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdateNicknameRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdatePasswordRequestDto;
-import com.jsm.boardgame.web.dto.request.member.UpdateProfileRequestDto;
+import com.jsm.boardgame.web.dto.request.member.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +22,14 @@ public class MemberController {
     }
 
     @GetMapping("/exists/username")
-    public ResponseEntity<Boolean> existsNickname(@RequestParam String username) {
-        boolean isExist = memberService.existsUsername(username);
+    public ResponseEntity<Boolean> existsNickname(@Valid @RequestBody ExistsUsernameRequestDto requestDto) {
+        boolean isExist = memberService.existsUsername(requestDto.getUsername());
         return ResponseEntity.ok(isExist);
     }
 
     @GetMapping("/exists/nickname")
-    public ResponseEntity<Boolean> existsUsername(@RequestParam String nickname) {
-        boolean isExist = memberService.existsNickname(nickname);
+    public ResponseEntity<Boolean> existsUsername(@Valid @RequestBody ExistsNicknameRequestDto requestDto) {
+        boolean isExist = memberService.existsNickname(requestDto.getNickname());
         return ResponseEntity.ok(isExist);
     }
 
