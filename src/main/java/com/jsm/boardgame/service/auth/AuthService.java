@@ -56,9 +56,8 @@ public class AuthService {
 
         loginAuthTokenRepository.save(
                 LoginAuthToken.builder()
-                        .key(authToken.getRedisKey())
-                        .memberId(member.getId())
                         .identifier(authToken.getIdentifier())
+                        .memberId(member.getId())
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .refreshTokenDeadlineDateTime(LocalDateTime.now().plusDays(refreshDeadlineDays))
@@ -86,7 +85,7 @@ public class AuthService {
             throw new ApiException(ErrorCodeType.REISSUE_MEMBER_NOT_FOUND);
         }
 
-        LoginAuthToken loginAuthToken = loginAuthTokenRepository.findById(authToken.getRedisKey())
+        LoginAuthToken loginAuthToken = loginAuthTokenRepository.findById(authToken.getIdentifier())
                 .orElseThrow(() -> new ApiException(ErrorCodeType.LOGIN_AUTH_TOKEN_NOT_FOUND));
         if (!loginAuthToken.validateReissue(requestDto.getAccessToken(), requestDto.getRefreshToken())) {
             lockAuthToken(authToken);
@@ -108,7 +107,7 @@ public class AuthService {
     }
 
     private void lockAuthToken(AuthToken authToken) {
-        loginAuthTokenRepository.deleteById(authToken.getRedisKey());
+        loginAuthTokenRepository.deleteById(authToken.getIdentifier());
         lockedAuthTokenRepository.save(new LockedAuthToken(authToken));
     }
 }

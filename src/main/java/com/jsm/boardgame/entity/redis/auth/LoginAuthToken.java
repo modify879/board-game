@@ -17,11 +17,9 @@ import java.time.LocalDateTime;
 public class LoginAuthToken {
 
     @Id
-    private String key;
+    private String identifier;
 
     private Long memberId;
-
-    private String identifier;
 
     private String accessToken;
 
@@ -33,10 +31,9 @@ public class LoginAuthToken {
     private long expirySeconds;
 
     @Builder
-    public LoginAuthToken(String key, Long memberId, String identifier, String accessToken, String refreshToken, long expirySeconds, LocalDateTime refreshTokenDeadlineDateTime) {
-        this.key = key;
-        this.memberId = memberId;
+    public LoginAuthToken(String identifier, Long memberId, String accessToken, String refreshToken, long expirySeconds, LocalDateTime refreshTokenDeadlineDateTime) {
         this.identifier = identifier;
+        this.memberId = memberId;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.refreshTokenDeadlineDateTime = refreshTokenDeadlineDateTime;

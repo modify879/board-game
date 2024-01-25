@@ -85,7 +85,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             AuthToken authToken = authTokenProvider.convertAuthToken(accessToken);
 
-            LoginAuthToken loginAuthToken = loginAuthTokenRepository.findById(member.getId() + ":" + authToken.getIdentifier()).orElseThrow();
+            LoginAuthToken loginAuthToken = loginAuthTokenRepository.findById(authToken.getIdentifier()).orElseThrow();
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -94,7 +94,6 @@ class AuthControllerTest extends AcceptanceTest {
             assertThat(refreshToken).isNotBlank();
 
             assertThat(loginAuthToken.getMemberId()).isEqualTo(member.getId());
-            assertThat(loginAuthToken.getKey()).isEqualTo(member.getId() + ":" + authToken.getIdentifier());
             assertThat(loginAuthToken.getMemberId()).isEqualTo(member.getId());
             assertThat(loginAuthToken.getIdentifier()).isEqualTo(authToken.getIdentifier());
             assertThat(loginAuthToken.getAccessToken()).isEqualTo(accessToken);
@@ -191,7 +190,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             JsonPath jsonPath = response.jsonPath();
 
-            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getKey()).orElseThrow();
+            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getIdentifier()).orElseThrow();
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -199,7 +198,6 @@ class AuthControllerTest extends AcceptanceTest {
             assertThat(jsonPath.getString("accessToken")).isNotEqualTo(loginAuthToken.getAccessToken());
             assertThat(jsonPath.getString("refreshToken")).isEqualTo(loginAuthToken.getRefreshToken());
 
-            assertThat(getLoginAuthToken.getKey()).isEqualTo(loginAuthToken.getKey());
             assertThat(getLoginAuthToken.getMemberId()).isEqualTo(loginAuthToken.getMemberId());
             assertThat(getLoginAuthToken.getIdentifier()).isEqualTo(loginAuthToken.getIdentifier());
             assertThat(getLoginAuthToken.getAccessToken()).isNotEqualTo(loginAuthToken.getAccessToken());
@@ -228,7 +226,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             JsonPath jsonPath = response.jsonPath();
 
-            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getKey()).orElseThrow();
+            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getIdentifier()).orElseThrow();
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -236,7 +234,6 @@ class AuthControllerTest extends AcceptanceTest {
             assertThat(jsonPath.getString("accessToken")).isNotEqualTo(loginAuthToken.getAccessToken());
             assertThat(jsonPath.getString("refreshToken")).isNotEqualTo(loginAuthToken.getRefreshToken());
 
-            assertThat(getLoginAuthToken.getKey()).isEqualTo(loginAuthToken.getKey());
             assertThat(getLoginAuthToken.getMemberId()).isEqualTo(loginAuthToken.getMemberId());
             assertThat(getLoginAuthToken.getIdentifier()).isEqualTo(loginAuthToken.getIdentifier());
             assertThat(getLoginAuthToken.getAccessToken()).isNotEqualTo(loginAuthToken.getAccessToken());
@@ -265,7 +262,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             JsonPath jsonPath = response.jsonPath();
 
-            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getKey()).orElse(null);
+            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getIdentifier()).orElse(null);
             LockedAuthToken lockedAuthToken = lockedAuthTokenRepository.findById(loginAuthToken.getAccessToken()).orElseThrow();
 
             // then
@@ -301,7 +298,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             JsonPath jsonPath = response.jsonPath();
 
-            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getKey()).orElse(null);
+            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getIdentifier()).orElse(null);
             LockedAuthToken lockedAuthToken = lockedAuthTokenRepository.findById(loginAuthToken.getAccessToken()).orElseThrow();
 
             // then
@@ -336,7 +333,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             JsonPath jsonPath = response.jsonPath();
 
-            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getKey()).orElse(null);
+            LoginAuthToken getLoginAuthToken = loginAuthTokenRepository.findById(loginAuthToken.getIdentifier()).orElse(null);
             List<LockedAuthToken> lockedAuthToken = IteratorUtils.toList(lockedAuthTokenRepository.findAll().iterator());
 
             // then
@@ -395,9 +392,8 @@ class AuthControllerTest extends AcceptanceTest {
             AuthToken authToken = new AuthToken(Keys.hmacShaKeyFor(secretKey.getBytes()), member, UUID.randomUUID().toString(), isAuthTokenExpired ? 0 : 3600);
             return loginAuthTokenRepository.save(
                     LoginAuthToken.builder()
-                            .key(authToken.getRedisKey())
-                            .memberId(member.getId())
                             .identifier(authToken.getIdentifier())
+                            .memberId(member.getId())
                             .accessToken(authToken.getToken())
                             .refreshToken(RandomStringUtils.randomAlphanumeric(256))
                             .refreshTokenDeadlineDateTime(LocalDateTime.now().plusDays(refreshDeadlineDays))
