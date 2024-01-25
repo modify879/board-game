@@ -81,10 +81,6 @@ public class AuthToken {
         }
     }
 
-    public String getRedisKey() {
-        return getMemberId() + ":" + getIdentifier();
-    }
-
     public LocalDateTime getExpiration() {
         try {
             return Jwts.parser()
