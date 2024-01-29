@@ -1,15 +1,21 @@
 package com.jsm.boardgame.common.jwt;
 
 import com.jsm.boardgame.entity.rds.member.Member;
+import com.jsm.boardgame.utils.EnumCodeConverterUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class AuthToken {
@@ -100,5 +106,38 @@ public class AuthToken {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private Member.Role getRole() {
+        try {
+            return EnumCodeConverterUtils.ofCode(Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get(ROLE, String.class), Member.Role.class);
+        } catch (ExpiredJwtException e) {
+            return EnumCodeConverterUtils.ofCode(e.getClaims().get(ROLE, String.class), Member.Role.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Authentication getAuthentication() {
+        Authentication authentication = null;
+
+        Member.Role role = getRole();
+        if (role != null) {
+            authentication = new UsernamePasswordAuthenticationToken(
+                    this.getMemberId(),
+                    this.token,
+                    Arrays.stream(Member.Role.values())
+                            .filter(v -> role.ordinal() <= v.ordinal())
+                            .map(v -> new SimpleGrantedAuthority(v.name()))
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        return authentication;
     }
 }

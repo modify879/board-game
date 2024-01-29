@@ -1,6 +1,6 @@
 package com.jsm.boardgame.config;
 
-import com.jsm.boardgame.config.security.LoginMemberArgumentResolver;
+import com.jsm.boardgame.config.security.annotation.LoginMemberArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

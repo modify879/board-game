@@ -1,6 +1,6 @@
 package com.jsm.boardgame.web.controller.member;
 
-import com.jsm.boardgame.config.security.LoginMember;
+import com.jsm.boardgame.config.security.annotation.LoginMember;
 import com.jsm.boardgame.service.member.MemberService;
 import com.jsm.boardgame.web.dto.request.member.*;
 import jakarta.validation.Valid;
@@ -22,13 +22,13 @@ public class MemberController {
     }
 
     @GetMapping("/exists/username")
-    public ResponseEntity<Boolean> existsNickname(@Valid @RequestBody ExistsUsernameRequestDto requestDto) {
+    public ResponseEntity<Boolean> existsUsername(@Valid @RequestBody ExistsUsernameRequestDto requestDto) {
         boolean isExist = memberService.existsUsername(requestDto.getUsername());
         return ResponseEntity.ok(isExist);
     }
 
     @GetMapping("/exists/nickname")
-    public ResponseEntity<Boolean> existsUsername(@Valid @RequestBody ExistsNicknameRequestDto requestDto) {
+    public ResponseEntity<Boolean> existsNickname(@Valid @RequestBody ExistsNicknameRequestDto requestDto) {
         boolean isExist = memberService.existsNickname(requestDto.getNickname());
         return ResponseEntity.ok(isExist);
     }
