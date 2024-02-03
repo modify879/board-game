@@ -21,33 +21,33 @@ public class GlobalControllerAdvice {
             log.error(throwable.getMessage(), e);
         }
 
-        return ResponseEntity.ok(new ApiErrorResponse(e.getMessage()));
+        return ResponseEntity.status(e.getHttpStatus()).body(new ApiErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<String> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ApiErrorResponse> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String message = "";
         if (fieldError != null) {
             message = fieldError.getDefaultMessage();
         }
 
-        return ResponseEntity.badRequest().body(message);
+        return ResponseEntity.badRequest().body(new ApiErrorResponse(message));
     }
 
     @ExceptionHandler(MissingRequestValueException.class)
-    protected ResponseEntity<String> handlerMissingRequestValue(MissingRequestValueException e) {
-        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+    protected ResponseEntity<ApiErrorResponse> handlerMissingRequestValue(MissingRequestValueException e) {
+        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<String> handlerHttpMessageNotReadable(HttpMessageNotReadableException e) {
-        return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+    protected ResponseEntity<ApiErrorResponse> handlerHttpMessageNotReadable(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<String> handlerException(Exception e) {
+    protected ResponseEntity<ApiErrorResponse> handlerException(Exception e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.internalServerError().body("예상치 못한 오류가 발생했습니다.\n관리자에게 문의 바랍니다.");
+        return ResponseEntity.internalServerError().body(new ApiErrorResponse("예상치 못한 오류가 발생했습니다.\n관리자에게 문의 바랍니다."));
     }
 }

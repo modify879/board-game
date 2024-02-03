@@ -1,4 +1,4 @@
-package com.jsm.boardgame.config.security;
+package com.jsm.boardgame.config.security.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

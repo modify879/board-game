@@ -1,9 +1,8 @@
 package com.jsm.boardgame.exception;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-@RequiredArgsConstructor
 @Getter
 public enum ErrorCodeType {
 
@@ -17,8 +16,20 @@ public enum ErrorCodeType {
     AUTH_TOKEN_BEFORE_EXPIRED("잘못된 요청입니다."),
     LOGIN_AUTH_TOKEN_NOT_FOUND("잘못된 요청입니다."),
     VALIDATE_REISSUE("잘못된 요청입니다."),
-    UNAUTHORIZED("로그인이 필요한 서비스입니다."),
+    UNAUTHORIZED("로그인이 필요한 서비스입니다.", HttpStatus.UNAUTHORIZED),
+    FORBIDDEN("권한이 없습니다.", HttpStatus.FORBIDDEN),
     UPDATE_MEMBER_NOT_FOUND("존재하지 않는 회원입니다.");
 
     private final String message;
+    private final HttpStatus httpStatus;
+
+    ErrorCodeType(String message) {
+        this.message = message;
+        this.httpStatus = HttpStatus.OK;
+    }
+
+    ErrorCodeType(String message, HttpStatus httpStatus) {
+        this.message = message;
+        this.httpStatus = httpStatus;
+    }
 }

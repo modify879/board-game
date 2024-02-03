@@ -20,6 +20,7 @@ spring:
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
+    com.jsm.boardgame: debug
 
 security:
   jwt:
