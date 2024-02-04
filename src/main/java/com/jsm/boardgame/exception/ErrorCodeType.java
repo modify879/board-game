@@ -18,7 +18,9 @@ public enum ErrorCodeType {
     VALIDATE_REISSUE("잘못된 요청입니다."),
     UNAUTHORIZED("로그인이 필요한 서비스입니다.", HttpStatus.UNAUTHORIZED),
     FORBIDDEN("권한이 없습니다.", HttpStatus.FORBIDDEN),
-    UPDATE_MEMBER_NOT_FOUND("존재하지 않는 회원입니다.");
+    UPDATE_MEMBER_NOT_FOUND("존재하지 않는 회원입니다."),
+    IMAGE_SIZE_LIMIT_EXCEEDED("이미지 크기는 10MB를 초과할 수 없습니다."),
+    NOT_IMAGE("이미지 형식이 아닙니다.");
 
     private final String message;
     private final HttpStatus httpStatus;
