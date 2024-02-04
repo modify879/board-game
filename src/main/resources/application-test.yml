@@ -6,7 +6,7 @@ spring:
     password: '*game*'
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -16,6 +16,11 @@ spring:
     redis:
       host: localhost
       port: 16379
+  servlet:
+    multipart:
+      enabled: true
+      max-request-size: 10MB
+      max-file-size: 10MB
 
 logging:
   level:
@@ -30,3 +35,8 @@ security:
       length: 256
       expiry-seconds: 604800
       deadline-days: 6
+
+file:
+  upload-path: build/resources/test
+  image-limit-size: 3KB
+  image-server-host: http://localhost:4000
