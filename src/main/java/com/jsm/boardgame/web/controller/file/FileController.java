@@ -23,4 +23,10 @@ public class FileController {
         String url = fileService.uploadImage(image);
         return ResponseEntity.ok(url);
     }
+
+    @PostMapping("/profile")
+    public ResponseEntity<String> uploadProfile(@RequestPart MultipartFile profile) throws IOException {
+        String url = fileService.uploadImage(profile);
+        return ResponseEntity.ok(url);
+    }
 }

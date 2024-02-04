@@ -31,6 +31,32 @@ class FileControllerTest extends AcceptanceTest {
     private String imageHost;
 
     @Nested
+    class uploadProfile {
+
+        @Test
+        void 프로필을_업로드_한다() throws IOException {
+            // given
+            BufferedImage bufferedImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", outputStream);
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .contentType(ContentType.MULTIPART)
+                    .multiPart("profile", "test.png", outputStream.toByteArray())
+                    .when().post("/api/v1/file/profile")
+                    .then().log().all()
+                    .extract();
+
+            // then
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+            assertThat(response.asString()).contains(imageHost);
+
+            outputStream.close();
+        }
+    }
+
+    @Nested
     class uploadImage {
 
         @Test
