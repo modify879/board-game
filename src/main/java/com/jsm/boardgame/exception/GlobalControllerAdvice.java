@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Slf4j
 @RestControllerAdvice
@@ -37,6 +38,11 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(MissingRequestValueException.class)
     protected ResponseEntity<ApiErrorResponse> handlerMissingRequestValue(MissingRequestValueException e) {
+        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    protected ResponseEntity<ApiErrorResponse> handlerMissingRequestValue(MissingServletRequestPartException e) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
