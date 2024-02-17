@@ -38,17 +38,17 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(MissingRequestValueException.class)
     protected ResponseEntity<ApiErrorResponse> handlerMissingRequestValue(MissingRequestValueException e) {
-        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
+        return ResponseEntity.ok(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     protected ResponseEntity<ApiErrorResponse> handlerMissingRequestValue(MissingServletRequestPartException e) {
-        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
+        return ResponseEntity.ok(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ApiErrorResponse> handlerHttpMessageNotReadable(HttpMessageNotReadableException e) {
-        return ResponseEntity.badRequest().body(new ApiErrorResponse("잘못된 요청입니다."));
+        return ResponseEntity.ok(new ApiErrorResponse("잘못된 요청입니다."));
     }
 
     @ExceptionHandler(Exception.class)
