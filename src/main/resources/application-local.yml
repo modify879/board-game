@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgres://localhost:5432/board-game
+    url: jdbc:postgresql://localhost:5432/board_game
     username: 'board'
     password: '*game*'
   jpa:
@@ -12,6 +12,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+    open-in-view: false
   data:
     redis:
       host: localhost
@@ -35,6 +36,9 @@ security:
       length: 256
       expiry-seconds: 604800
       deadline-days: 6
+  cors:
+    host:
+      front: http://localhost:3000
 
 file:
   upload-path: E:\upload
