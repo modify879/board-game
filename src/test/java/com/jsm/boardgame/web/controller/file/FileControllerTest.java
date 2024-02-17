@@ -108,7 +108,7 @@ class FileControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.IMAGE_SIZE_LIMIT_EXCEEDED.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.IMAGE_SIZE_LIMIT_EXCEEDED.getMessage());
 
             outputStream.close();
         }
@@ -132,7 +132,7 @@ class FileControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.NOT_IMAGE.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.NOT_IMAGE.getMessage());
         }
 
         private Member createMember() {

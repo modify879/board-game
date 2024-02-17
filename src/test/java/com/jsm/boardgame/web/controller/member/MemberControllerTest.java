@@ -97,7 +97,7 @@ class MemberControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ class MemberControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.PASSWORD_NOT_EQUAL.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.PASSWORD_NOT_EQUAL.getMessage());
         }
 
         @Test
@@ -209,7 +209,7 @@ class MemberControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
         }
     }
 
@@ -284,7 +284,7 @@ class MemberControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.UPDATE_MEMBER_NOT_FOUND.getMessage());
         }
     }
 
@@ -463,7 +463,7 @@ class MemberControllerTest extends AcceptanceTest {
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.EXISTS_USERNAME.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.EXISTS_USERNAME.getMessage());
         }
 
         @Test
@@ -501,7 +501,7 @@ class MemberControllerTest extends AcceptanceTest {
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.EXISTS_NICKNAME.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.EXISTS_NICKNAME.getMessage());
         }
     }
 }

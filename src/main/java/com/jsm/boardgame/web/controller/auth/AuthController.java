@@ -1,8 +1,10 @@
 package com.jsm.boardgame.web.controller.auth;
 
+import com.jsm.boardgame.config.security.annotation.LoginMember;
 import com.jsm.boardgame.service.auth.AuthService;
 import com.jsm.boardgame.web.dto.request.auth.LoginRequestDto;
 import com.jsm.boardgame.web.dto.request.auth.ReissueRequestDto;
+import com.jsm.boardgame.web.dto.response.auth.AuthCheckResponseDto;
 import com.jsm.boardgame.web.dto.response.auth.LoginTokenResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,12 @@ public class AuthController {
     @PutMapping("/reissue")
     public ResponseEntity<LoginTokenResponseDto> reissue(@Valid @RequestBody ReissueRequestDto requestDto) {
         LoginTokenResponseDto responseDto = authService.reissue(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<AuthCheckResponseDto> check(@LoginMember Long memberId) {
+        AuthCheckResponseDto responseDto = authService.check(memberId);
         return ResponseEntity.ok(responseDto);
     }
 }

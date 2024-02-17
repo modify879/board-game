@@ -36,6 +36,9 @@ security:
       length: 256
       expiry-seconds: 604800
       deadline-days: 6
+  cors:
+    host:
+      front: http://localhost:3000
 
 file:
   upload-path: build/resources/test

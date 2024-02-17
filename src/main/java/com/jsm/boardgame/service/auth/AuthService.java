@@ -12,6 +12,7 @@ import com.jsm.boardgame.repository.redis.auth.LockedAuthTokenRepository;
 import com.jsm.boardgame.repository.redis.auth.LoginAuthTokenRepository;
 import com.jsm.boardgame.web.dto.request.auth.LoginRequestDto;
 import com.jsm.boardgame.web.dto.request.auth.ReissueRequestDto;
+import com.jsm.boardgame.web.dto.response.auth.AuthCheckResponseDto;
 import com.jsm.boardgame.web.dto.response.auth.LoginTokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -104,6 +106,16 @@ public class AuthService {
         loginAuthTokenRepository.save(newLoginAuthToken);
 
         return new LoginTokenResponseDto(newLoginAuthToken.getAccessToken(), newLoginAuthToken.getRefreshToken());
+    }
+
+    @Transactional(readOnly = true)
+    public AuthCheckResponseDto check(Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (member.isPresent()) {
+            return AuthCheckResponseDto.success(member.get());
+        }
+
+        return AuthCheckResponseDto.fail();
     }
 
     private void lockAuthToken(AuthToken authToken) {
