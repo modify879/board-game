@@ -57,6 +57,82 @@ class AuthControllerTest extends AcceptanceTest {
     private long refreshExpirySeconds;
 
     @Nested
+    class check {
+
+        @Test
+        void 로그인_체크를_한다() {
+            // given
+            Member member = createMember();
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .auth().oauth2(getAuthToken(member).getToken())
+                    .when().get("/api/v1/auth/check")
+                    .then().log().all()
+                    .extract();
+
+            JsonPath jsonPath = response.jsonPath();
+
+            // then
+            assertThat(jsonPath.getBoolean("login")).isTrue();
+            assertThat(jsonPath.getString("nickname")).isEqualTo(member.getNickname());
+            assertThat(jsonPath.getString("profile")).isEqualTo(member.getProfile());
+            assertThat(jsonPath.getString("role")).isEqualTo(member.getRole().getCode());
+        }
+
+        @Test
+        void 로그인을_하지않은_상태() {
+            // given
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .when().get("/api/v1/auth/check")
+                    .then().log().all()
+                    .extract();
+
+            JsonPath jsonPath = response.jsonPath();
+
+            // then
+            assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.UNAUTHORIZED.getMessage());
+        }
+
+        @Test
+        void 로그인_체크를_실패한다() {
+            // given
+            Member member = createMember();
+
+            memberRepository.delete(member);
+
+            // when
+            ExtractableResponse<Response> response = RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .auth().oauth2(getAuthToken(member).getToken())
+                    .when().get("/api/v1/auth/check")
+                    .then().log().all()
+                    .extract();
+
+            JsonPath jsonPath = response.jsonPath();
+
+            // then
+            assertThat(jsonPath.getBoolean("login")).isFalse();
+        }
+
+        private Member createMember() {
+            return memberRepository.save(Member.builder()
+                    .username("username")
+                    .password("password")
+                    .nickname("nickname")
+                    .profile("http://localhost:8080/profile.jpg")
+                    .role(Member.Role.MEMBER)
+                    .point(0)
+                    .build());
+        }
+    }
+
+    @Nested
     class login {
 
         @Test
@@ -124,7 +200,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.LOGIN_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.LOGIN_MEMBER_NOT_FOUND.getMessage());
         }
 
         @Test
@@ -151,7 +227,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.NOT_MATCH_PASSWORD.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.NOT_MATCH_PASSWORD.getMessage());
         }
 
         private Member createMember(String username, String password) {
@@ -268,7 +344,7 @@ class AuthControllerTest extends AcceptanceTest {
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
 
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.AUTH_TOKEN_BEFORE_EXPIRED.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.AUTH_TOKEN_BEFORE_EXPIRED.getMessage());
 
             assertThat(getLoginAuthToken).isNull();
             assertThat(lockedAuthToken.getAccessToken()).isEqualTo(loginAuthToken.getAccessToken());
@@ -303,7 +379,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.REISSUE_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.REISSUE_MEMBER_NOT_FOUND.getMessage());
 
             assertThat(getLoginAuthToken).isNull();
             assertThat(lockedAuthToken.getAccessToken()).isEqualTo(loginAuthToken.getAccessToken());
@@ -338,7 +414,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.LOGIN_AUTH_TOKEN_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.LOGIN_AUTH_TOKEN_NOT_FOUND.getMessage());
 
             assertThat(getLoginAuthToken).isNull();
             assertThat(lockedAuthToken).isEmpty();
@@ -370,7 +446,7 @@ class AuthControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.REISSUE_MEMBER_NOT_FOUND.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.REISSUE_MEMBER_NOT_FOUND.getMessage());
 
             assertThat(getLoginAuthToken).isNull();
             assertThat(lockedAuthToken.getAccessToken()).isEqualTo(loginAuthToken.getAccessToken());

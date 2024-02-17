@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.EnumSet;
 
-public class EnumCodeConverterUtils {
+public final class EnumCodeConverterUtils {
 
     public static <T extends Enum<T> & EnumCodeType> T ofCode(String code, Class<T> enumClass) {
         if (StringUtils.isBlank(code)) {

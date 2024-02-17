@@ -61,7 +61,7 @@ public class SecurityControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.FORBIDDEN.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.FORBIDDEN.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.FORBIDDEN.getMessage());
         }
 
         @Test
@@ -78,7 +78,7 @@ public class SecurityControllerTest extends AcceptanceTest {
 
             // then
             assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-            assertThat(jsonPath.getString("message")).isEqualTo(ErrorCodeType.UNAUTHORIZED.getMessage());
+            assertThat(jsonPath.getString("errorMessage")).isEqualTo(ErrorCodeType.UNAUTHORIZED.getMessage());
         }
 
         private Member createMember(Member.Role role) {
