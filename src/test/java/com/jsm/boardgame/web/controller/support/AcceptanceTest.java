@@ -23,7 +23,7 @@ import java.io.File;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @ActiveProfiles("test")
-public abstract class AcceptanceTest {
+public class AcceptanceTest {
 
     @LocalServerPort
     protected int port;
