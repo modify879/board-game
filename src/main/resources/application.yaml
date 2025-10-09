@@ -1,1 +1,41 @@
 spring.application.name: board-game
+
+spring:
+  ### db ###
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/board_game
+    username: admin
+    password: admin
+
+  ### jpa ###
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  ### redis ###
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+### logging ###
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+
+### auth token ###
+auth.token:
+  access-token:
+    secret-key: c2xOTGFaQnRUV3BKd0ljV085bGRzMk9IR2JVbU1HVEw=
+    expiration-in-sec: 1800
+  refresh-token:
+    expiration-in-sec: 604800
