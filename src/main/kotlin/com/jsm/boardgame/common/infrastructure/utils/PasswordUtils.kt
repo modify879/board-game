@@ -8,4 +8,7 @@ object PasswordUtils {
     private val encoder: PasswordEncoder = BCryptPasswordEncoder()
 
     fun encodePassword(rawPassword: String): String = encoder.encode(rawPassword)
+
+    fun matchesPassword(rawPassword: String, encodedPassword: String): Boolean =
+        encoder.matches(rawPassword, encodedPassword)
 }

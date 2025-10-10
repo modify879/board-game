@@ -39,3 +39,4 @@ auth.token:
     expiration-in-sec: 1800
   refresh-token:
     expiration-in-sec: 604800
+    redis-key: "auth:refresh-token:{userId}"

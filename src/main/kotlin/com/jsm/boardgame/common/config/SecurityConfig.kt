@@ -26,6 +26,7 @@ class SecurityConfig {
                 it.requestMatchers(HttpMethod.OPTIONS).permitAll()
                 it.requestMatchers("/error").permitAll()
                 it.requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                it.requestMatchers("/api/auth/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .exceptionHandling {
