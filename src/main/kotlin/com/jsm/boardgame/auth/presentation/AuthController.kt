@@ -19,4 +19,10 @@ class AuthController(
         val authToken = authService.login(request.username, request.password)
         return AuthTokenResponse(authToken.accessToken, authToken.refreshToken)
     }
+
+    @PostMapping("/reissue")
+    fun reissue(@RequestBody request: AuthTokenResponse): AuthTokenResponse {
+        val authToken = authService.reissue(request.accessToken, request.refreshToken)
+        return AuthTokenResponse(authToken.accessToken, authToken.refreshToken)
+    }
 }

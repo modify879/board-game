@@ -2,5 +2,11 @@ package com.jsm.boardgame.auth.domain
 
 interface AuthRedisRepository {
 
-    fun saveRefreshToken(userId: Long, refreshToken: String)
+    fun saveRefreshToken(userId: Long, refreshToken: String, expiration: Long)
+
+    fun existsRefreshToken(userId: Long, refreshToken: String): Boolean
+
+    fun getRefreshTokenTTL(userId: Long, refreshToken: String): Long
+
+    fun deleteRefreshToken(userId: Long)
 }

@@ -15,5 +15,6 @@ data class AuthTokenProperties(
     data class RefreshToken(
         val expirationInSec: Int,
         val redisKey: String,
+        val reissueInSec: Int,
     )
 }
