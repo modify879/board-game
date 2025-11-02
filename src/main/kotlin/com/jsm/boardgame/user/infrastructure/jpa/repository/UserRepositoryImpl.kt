@@ -13,5 +13,4 @@ class UserRepositoryImpl(
     override fun createUser(user: User): User = userJpaRepository.save(UserEntity.from(user)).toDomain()
 
     override fun findByUsername(username: String): User? = userJpaRepository.findByUsername(username)?.toDomain()
-
 }

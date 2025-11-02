@@ -1,6 +1,6 @@
 package com.jsm.boardgame.common.config
 
-import com.jsm.boardgame.auth.infrastructure.jwt.AuthTokenProvider
+import com.jsm.boardgame.auth.domain.port.out.AuthTokenProvider
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -78,13 +78,13 @@ class JwtAuthenticationFilter(
 
             if (authTokenProvider.validate(accessToken)) {
                 val userId = authTokenProvider.getUserId(accessToken)
-                val roles = authTokenProvider.getRoles(accessToken)
+                val roles = authTokenProvider.getUserRoles(accessToken)
 
                 if (userId != null && roles.isNotEmpty()) {
                     val authentication = UsernamePasswordAuthenticationToken(
                         User(userId.toString(), "", emptyList()),
                         null,
-                        roles.map { SimpleGrantedAuthority("ROLE_${it.name}") }
+                        roles.map { SimpleGrantedAuthority("ROLE_${it}") }
                     )
 
                     SecurityContextHolder.getContext().authentication = authentication

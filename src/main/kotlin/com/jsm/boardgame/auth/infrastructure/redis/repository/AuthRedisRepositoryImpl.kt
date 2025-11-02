@@ -1,9 +1,6 @@
 package com.jsm.boardgame.auth.infrastructure.redis.repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.jsm.boardgame.auth.domain.AuthRedisRepository
+import com.jsm.boardgame.auth.domain.repository.AuthRedisRepository
 import com.jsm.boardgame.common.properties.AuthTokenProperties
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
@@ -13,10 +10,6 @@ class AuthRedisRepositoryImpl(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val authTokenProperties: AuthTokenProperties,
 ) : AuthRedisRepository {
-
-    private val objectMapper = ObjectMapper()
-        .registerModule(KotlinModule.Builder().build())
-        .registerModule(JavaTimeModule())
 
     override fun saveRefreshToken(userId: Long, refreshToken: String, expiration: Long) {
         val redisKey = generateRefreshRedisKey(userId)
@@ -40,15 +33,16 @@ class AuthRedisRepositoryImpl(
         return redisTemplate.opsForHash<String, Any>().hasKey(redisKey, refreshToken)
     }
 
-    override fun getRefreshTokenTTL(userId: Long, refreshToken: String): Long {
+    override fun getRefreshTokenTTL(userId: Long, refreshToken: String): Long? {
         val redisKey = generateRefreshRedisKey(userId)
         return redisTemplate.execute { connection ->
             connection.hashCommands().hTtl(redisKey.toByteArray(), refreshToken.toByteArray())
-        }!![0]
+        }?.get(0)
     }
 
     override fun deleteRefreshToken(userId: Long) {
         val redisKey = generateRefreshRedisKey(userId)
+        println(redisKey)
         redisTemplate.delete(redisKey)
     }
 

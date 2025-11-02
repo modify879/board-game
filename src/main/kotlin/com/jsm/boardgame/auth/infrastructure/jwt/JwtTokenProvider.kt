@@ -1,7 +1,7 @@
 package com.jsm.boardgame.auth.infrastructure.jwt
 
+import com.jsm.boardgame.auth.domain.port.out.AuthTokenProvider
 import com.jsm.boardgame.common.properties.AuthTokenProperties
-import com.jsm.boardgame.user.infrastructure.jpa.entity.Role
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class AuthTokenProvider(
+class JwtTokenProvider(
     private val authTokenProperties: AuthTokenProperties
-) {
+) : AuthTokenProvider {
 
     private val secretKey = Keys.hmacShaKeyFor(authTokenProperties.accessToken.secretKey.toByteArray())
 
-    fun generateAccessToken(userId: Long, roles: List<Role>): String =
+    override fun generateAccessToken(userId: Long, roles: List<String>): String =
         Jwts.builder()
             .signWith(secretKey, Jwts.SIG.HS256)
             .claim(ID, userId)
@@ -23,9 +23,9 @@ class AuthTokenProvider(
             .claim(EXPIRATION, Date().time + authTokenProperties.accessToken.expirationInSec * 1000)
             .compact()
 
-    fun generateRefreshToken(): String = UUID.randomUUID().toString().replace("-", "")
+    override fun generateRefreshToken(): String = UUID.randomUUID().toString().replace("-", "")
 
-    fun validate(accessToken: String): Boolean {
+    override fun validate(accessToken: String): Boolean {
         return try {
             val claims = getClaims(accessToken)
             claims["expiration"].toString().toLong() > Date().time
@@ -34,7 +34,7 @@ class AuthTokenProvider(
         }
     }
 
-    fun getUserId(accessToken: String): Long? {
+    override fun getUserId(accessToken: String): Long? {
         return try {
             getClaims(accessToken)[ID].toString().toLong()
         } catch (_: Exception) {
@@ -42,17 +42,11 @@ class AuthTokenProvider(
         }
     }
 
-    fun getRoles(accessToken: String): List<Role> {
+    override fun getUserRoles(accessToken: String): List<String> {
         return try {
-            val rawList = getClaims(accessToken)[ROLE] as? List<*> ?: return emptyList()
-            rawList.mapNotNull { role ->
-                (role as? String)?.let {
-                    try {
-                        Role.valueOf(it)
-                    } catch (_: IllegalArgumentException) {
-                        null
-                    }
-                }
+            when (val roles = getClaims(accessToken)[ROLE]) {
+                is List<*> -> roles.mapNotNull { it?.toString() }
+                else -> emptyList()
             }
         } catch (_: Exception) {
             emptyList()

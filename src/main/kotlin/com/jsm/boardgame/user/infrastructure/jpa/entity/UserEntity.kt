@@ -2,6 +2,7 @@ package com.jsm.boardgame.user.infrastructure.jpa.entity
 
 import com.jsm.boardgame.common.infrastructure.jpa.entity.BaseEntity
 import com.jsm.boardgame.user.domain.model.User
+import com.jsm.boardgame.user.domain.model.UserRole
 import jakarta.persistence.*
 
 @Entity
@@ -20,7 +21,7 @@ class UserEntity(
     var nickname: String,
 
     @Enumerated(EnumType.STRING)
-    var role: List<Role> = listOf(Role.USER),
+    var role: List<UserRole> = listOf(UserRole.USER),
 
     var profile: String? = null,
 ) : BaseEntity() {
@@ -30,7 +31,7 @@ class UserEntity(
         username = this.username,
         password = this.password,
         nickname = this.nickname,
-        role = this.role,
+        userRole = this.role,
         profile = this.profile,
     )
 
@@ -40,10 +41,8 @@ class UserEntity(
             username = user.username,
             password = user.password,
             nickname = user.nickname,
-            role = user.role,
+            role = user.userRole,
             profile = user.profile,
         )
     }
 }
-
-enum class Role { USER, ADMIN }

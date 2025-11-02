@@ -1,4 +1,4 @@
-package com.jsm.boardgame.auth.domain
+package com.jsm.boardgame.auth.domain.repository
 
 interface AuthRedisRepository {
 
@@ -6,7 +6,7 @@ interface AuthRedisRepository {
 
     fun existsRefreshToken(userId: Long, refreshToken: String): Boolean
 
-    fun getRefreshTokenTTL(userId: Long, refreshToken: String): Long
+    fun getRefreshTokenTTL(userId: Long, refreshToken: String): Long?
 
     fun deleteRefreshToken(userId: Long)
 }

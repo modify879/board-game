@@ -1,4 +1,4 @@
-package com.jsm.boardgame.common.infrastructure.utils
+package com.jsm.boardgame.common.utils
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
