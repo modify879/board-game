@@ -1,4 +1,4 @@
-package com.jsm.boardgame.auth.presentation.dto.response
+package com.jsm.boardgame.auth.application.dto.response
 
 data class AuthTokenResponse(
     val accessToken: String,

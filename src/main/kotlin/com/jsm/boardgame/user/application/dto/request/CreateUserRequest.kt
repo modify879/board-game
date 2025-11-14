@@ -1,4 +1,4 @@
-package com.jsm.boardgame.user.presentation.dto.request
+package com.jsm.boardgame.user.application.dto.request
 
 data class CreateUserRequest(
     val username: String,

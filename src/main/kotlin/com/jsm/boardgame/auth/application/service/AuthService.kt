@@ -1,6 +1,6 @@
 package com.jsm.boardgame.auth.application.service
 
-import com.jsm.boardgame.auth.application.query.AuthTokenQuery
+import com.jsm.boardgame.auth.application.dto.response.AuthTokenResponse
 import com.jsm.boardgame.auth.domain.port.out.AuthTokenProvider
 import com.jsm.boardgame.auth.domain.port.out.UserAuthenticationPort
 import com.jsm.boardgame.auth.domain.repository.AuthRedisRepository
@@ -20,7 +20,7 @@ class AuthService(
     private val refreshTokenExpirationInSec = authTokenProperties.refreshToken.expirationInSec.toLong()
 
     @Transactional
-    fun login(username: String, password: String): AuthTokenQuery {
+    fun login(username: String, password: String): AuthTokenResponse {
         val user =
             userAuthenticationPort.getUserByUsername(username) ?: throw IllegalArgumentException("User not found")
 
@@ -37,11 +37,11 @@ class AuthService(
             refreshTokenExpirationInSec
         )
 
-        return AuthTokenQuery(accessToken, refreshToken)
+        return AuthTokenResponse(accessToken, refreshToken)
     }
 
     @Transactional
-    fun reissue(accessToken: String, refreshToken: String): AuthTokenQuery {
+    fun reissue(accessToken: String, refreshToken: String): AuthTokenResponse {
         val userId = authTokenProvider.getUserId(accessToken)
             ?: throw IllegalArgumentException("Invalid access token: User ID not found")
 
@@ -75,6 +75,6 @@ class AuthService(
             )
         }
 
-        return AuthTokenQuery(newAccessToken, newRefreshToken)
+        return AuthTokenResponse(newAccessToken, newRefreshToken)
     }
 }

@@ -1,8 +1,8 @@
 package com.jsm.boardgame.auth.presentation
 
+import com.jsm.boardgame.auth.application.dto.request.LoginRequest
+import com.jsm.boardgame.auth.application.dto.response.AuthTokenResponse
 import com.jsm.boardgame.auth.application.service.AuthService
-import com.jsm.boardgame.auth.presentation.dto.request.LoginRequest
-import com.jsm.boardgame.auth.presentation.dto.response.AuthTokenResponse
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -15,14 +15,10 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest): AuthTokenResponse {
-        val authToken = authService.login(request.username, request.password)
-        return AuthTokenResponse(authToken.accessToken, authToken.refreshToken)
-    }
+    fun login(@RequestBody request: LoginRequest): AuthTokenResponse =
+        authService.login(request.username, request.password)
 
     @PostMapping("/reissue")
-    fun reissue(@RequestBody request: AuthTokenResponse): AuthTokenResponse {
-        val authToken = authService.reissue(request.accessToken, request.refreshToken)
-        return AuthTokenResponse(authToken.accessToken, authToken.refreshToken)
-    }
+    fun reissue(@RequestBody request: AuthTokenResponse): AuthTokenResponse =
+        authService.reissue(request.accessToken, request.refreshToken)
 }

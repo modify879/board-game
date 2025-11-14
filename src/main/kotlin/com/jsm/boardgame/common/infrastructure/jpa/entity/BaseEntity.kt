@@ -6,9 +6,8 @@ import jakarta.persistence.PreUpdate
 import java.time.LocalDateTime
 
 @MappedSuperclass
-class BaseEntity(
+abstract class BaseEntity(
     var createdAt: LocalDateTime = LocalDateTime.now(),
-
     var modifiedAt: LocalDateTime = LocalDateTime.now(),
 ) {
 

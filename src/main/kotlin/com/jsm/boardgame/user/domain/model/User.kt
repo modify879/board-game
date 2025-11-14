@@ -1,6 +1,6 @@
 package com.jsm.boardgame.user.domain.model
 
-data class User(
+class User(
     val id: Long?,
     val username: String,
     val password: String,
@@ -8,5 +8,3 @@ data class User(
     val userRole: List<UserRole>,
     val profile: String?,
 )
-
-enum class UserRole { USER, ADMIN }
