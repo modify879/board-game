@@ -26,6 +26,12 @@ spring:
       host: localhost
       port: 6379
 
+### jwt ###
+jwt:
+  secret: your-secret-key-change-this-in-production-minimum-256-bits
+  access-token-expiration: 1800000  # 30분 (밀리초)
+  refresh-token-expiration: 604800000  # 7일 (밀리초)
+
 ### logging ###
 logging:
   level:
