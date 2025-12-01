@@ -1,8 +1,8 @@
 package com.jsm.boardgame.user.presentation.rest
 
 import com.jsm.boardgame.user.application.port.`in`.RegisterUserUseCase
-import com.jsm.boardgame.user.presentation.rest.dto.RegisterUserRequest
-import com.jsm.boardgame.user.presentation.rest.dto.UserResponse
+import com.jsm.boardgame.user.presentation.dto.request.RegisterUserRequest
+import com.jsm.boardgame.user.presentation.dto.response.UserResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,4 +21,3 @@ class UserRegistrationController(
         return UserResponse.from(result)
     }
 }
-

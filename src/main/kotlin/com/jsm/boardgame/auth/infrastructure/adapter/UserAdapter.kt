@@ -2,7 +2,7 @@ package com.jsm.boardgame.auth.infrastructure.adapter
 
 import com.jsm.boardgame.auth.application.port.out.UserQueryPort
 import com.jsm.boardgame.auth.application.port.out.UserQueryResult
-import com.jsm.boardgame.user.application.dto.UserDto
+import com.jsm.boardgame.user.application.dto.response.UserDto
 import com.jsm.boardgame.user.application.service.UserQueryService
 import org.springframework.stereotype.Component
 

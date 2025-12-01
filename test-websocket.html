@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Lexio Game WebSocket Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.5.1/jsrsasign-all-min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .log-area {
+            height: 300px;
+            overflow-y: scroll;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: monospace;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        input {
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .status.connected {
+            color: green;
+        }
+
+        .status.disconnected {
+            color: red;
+        }
+
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🃏 Lexio WebSocket Tester</h1>
+
+    <div class="section">
+        <h3>0. JWT 토큰 생성 (테스트용)</h3>
+        <div>
+            <label>User ID:</label>
+            <input id="genUserId" type="number" value="1" placeholder="User ID">
+            <label>Role:</label>
+            <input id="genRole" type="text" value="USER" placeholder="Role">
+        </div>
+        <div style="margin-top: 5px;">
+            <label>Secret Key:</label>
+            <input id="genSecret" type="text" value="your-secret-key-change-this-in-production-minimum-256-bits" style="width: 400px;">
+        </div>
+        <div style="margin-top: 10px;">
+            <button onclick="generateToken()">토큰 생성 및 입력</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>1. 서버 연결</h3>
+        <div>
+            <label>JWT Token:</label>
+            <input class="full-width" id="jwtToken" placeholder="Bearer Token (without 'Bearer ' prefix)" type="text">
+        </div>
+        <div style="margin-top: 10px;">
+            <button onclick="connect()">Socket 연결 (SockJS)</button>
+            <button onclick="disconnect()">연결 해제</button>
+            <span class="status disconnected" id="connectionStatus">Disconnected</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>2. 게임 생성</h3>
+        <div style="margin-top: 10px;">
+            <button onclick="createGame()">새 게임 생성</button>
+            <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                ※ 생성된 Game ID가 자동으로 입력됩니다.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>3. 게임 참가 및 구독</h3>
+        <div>
+            <label>Game ID:</label>
+            <input id="gameId" placeholder="UUID 입력 (예: 550e8400...)" style="width: 300px;" type="text">
+        </div>
+        <div style="margin-top: 10px;">
+            <button onclick="joinAndSubscribe()">게임 참가 및 구독</button>
+            <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                ※ 참가와 구독이 동시에 수행됩니다. User ID는 JWT 토큰에서 자동으로 추출됩니다.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>4. 액션 테스트</h3>
+        <button onclick="sendToggleReady()">준비 토글 (Ready/Unready)</button>
+        <button onclick="sendPassTurn()">턴 패스 (Pass)</button>
+        <br><br>
+        <div>
+            <label>타일 내기:</label>
+            <input id="playTiles" placeholder='[{"number":2,"suit":"SUN"}]' style="width: 400px;"
+                   type="text">
+            <button onclick="sendPlayTurn()">타일 제출</button>
+            <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                ※ power는 서버에서 자동 계산됩니다 (number와 suit만 입력)
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>📜 메시지 로그</h3>
+        <button onclick="clearLog()" style="float: right; font-size: 0.8em;">로그 지우기</button>
+        <div class="log-area" id="logArea"></div>
+    </div>
+</div>
+
+<script>
+    var stompClient = null;
+    var currentSubscription = null;
+
+    function generateToken() {
+        var userId = document.getElementById('genUserId').value;
+        var role = document.getElementById('genRole').value;
+        var secret = document.getElementById('genSecret').value;
+
+        if (!userId || !role || !secret) {
+            alert('User ID, Role, Secret Key를 모두 입력해주세요.');
+            return;
+        }
+
+        // Header
+        var header = {alg: "HS256"};
+
+        // Payload
+        var tNow = Math.floor(Date.now() / 1000);
+        var tEnd = tNow + (30 * 60); // 30 mins
+        var payload = {
+            sub: userId,
+            role: role,
+            iat: tNow,
+            exp: tEnd
+        };
+
+        try {
+            var token = KJUR.jws.JWS.sign("HS256", JSON.stringify(header), JSON.stringify(payload), secret);
+            document.getElementById('jwtToken').value = token;
+            log('JWT Token Generated for User ' + userId);
+        } catch (e) {
+            log('Token Generation Failed: ' + e, 'error');
+            alert('토큰 생성 실패: ' + e);
+        }
+    }
+
+    function log(message, type = 'info') {
+        var logArea = document.getElementById('logArea');
+        var p = document.createElement('p');
+        p.style.margin = '2px 0';
+        p.style.color = type === 'error' ? 'red' : (type === 'rx' ? 'blue' : 'black');
+        p.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
+        logArea.appendChild(p);
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    function clearLog() {
+        document.getElementById('logArea').innerHTML = '';
+    }
+
+    function connect() {
+        var token = document.getElementById('jwtToken').value.trim();
+        if (!token) {
+            alert('JWT Token을 입력해주세요.');
+            return;
+        }
+
+        var socket = new SockJS('http://localhost:8080/ws');
+        stompClient = Stomp.over(socket);
+
+        // 디버그 로그 끄기 (너무 시끄러우면)
+        // stompClient.debug = null;
+
+        var headers = {
+            'Authorization': 'Bearer ' + token
+        };
+
+        stompClient.connect(headers, function (frame) {
+            document.getElementById('connectionStatus').innerText = 'Connected';
+            document.getElementById('connectionStatus').className = 'status connected';
+            log('Connected: ' + frame);
+        }, function (error) {
+            log('Connection Error: ' + error, 'error');
+            document.getElementById('connectionStatus').innerText = 'Disconnected';
+            document.getElementById('connectionStatus').className = 'status disconnected';
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        document.getElementById('connectionStatus').innerText = 'Disconnected';
+        document.getElementById('connectionStatus').className = 'status disconnected';
+        log('Disconnected');
+    }
+
+    function createGame() {
+        var token = document.getElementById('jwtToken').value.trim();
+        if (!token) {
+            alert('JWT Token을 입력해주세요.');
+            return;
+        }
+
+        log('Creating new game...');
+        fetch('http://localhost:8080/api/lexio/games', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text || '게임 생성 실패');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('gameId').value = data.gameId;
+            log(`✅ Game Created: ${data.gameId}`, 'info');
+        })
+        .catch(error => {
+            log('Game Creation Failed: ' + error.message, 'error');
+            alert('게임 생성 실패: ' + error.message);
+        });
+    }
+
+    function joinAndSubscribe() {
+        var gameId = document.getElementById('gameId').value.trim();
+        var token = document.getElementById('jwtToken').value.trim();
+        
+        if (!gameId) {
+            alert('Game ID를 입력하세요.');
+            return;
+        }
+        if (!token) {
+            alert('JWT Token을 입력해주세요.');
+            return;
+        }
+        if (!stompClient || !stompClient.connected) {
+            alert('먼저 서버에 연결하세요.');
+            return;
+        }
+
+        // 1. 게임 참가 (REST API)
+        log(`Joining game ${gameId}...`);
+        fetch(`http://localhost:8080/api/lexio/games/${gameId}/join`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text || '게임 참가 실패');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            log(`✅ Joined game: ${gameId}`, 'info');
+            
+            // 2. 구독 (WebSocket)
+            if (currentSubscription) {
+                currentSubscription.unsubscribe();
+            }
+
+            log(`Subscribing to /user/queue/game/${gameId}...`);
+            currentSubscription = stompClient.subscribe(`/user/queue/game/${gameId}`, function (message) {
+                log(`📩 Received Update: ${message.body}`, 'rx');
+                // JSON 파싱해서 보기 좋게 출력 가능
+                try {
+                    var data = JSON.parse(message.body);
+                    console.log("Game Data:", data);
+                    
+                    // 현재 차례 플레이어 정보 표시
+                    if (data.currentTurnPlayerId) {
+                        var currentTurnPlayer = data.players.find(function(p) {
+                            return p.userId === data.currentTurnPlayerId;
+                        });
+                        if (currentTurnPlayer) {
+                            log(`🎯 현재 차례: ${currentTurnPlayer.name} (User ID: ${currentTurnPlayer.userId})`, 'info');
+                        } else {
+                            log(`🎯 현재 차례: User ID ${data.currentTurnPlayerId}`, 'info');
+                        }
+                    } else {
+                        log(`⏸️ 현재 차례 없음 (게임 대기 중)`, 'info');
+                    }
+                    
+                    // 각 플레이어의 차례 여부 표시
+                    data.players.forEach(function(player) {
+                        if (player.isCurrentTurn) {
+                            log(`   ✓ ${player.name}의 차례입니다`, 'info');
+                        }
+                    });
+                } catch (e) {
+                }
+            });
+            log(`✅ Subscribed to game updates`, 'info');
+        })
+        .catch(error => {
+            log('Join Failed: ' + error.message, 'error');
+            alert('게임 참가 실패: ' + error.message);
+        });
+    }
+
+    function sendToggleReady() {
+        var gameId = document.getElementById('gameId').value.trim();
+
+        if (!gameId) {
+            alert('Game ID를 입력하세요.');
+            return;
+        }
+
+        log(`Sending Ready Toggle...`);
+        stompClient.send(`/app/game/${gameId}/ready`, {}, {}); // userId는 서버에서 자동 추출
+    }
+
+    function sendPassTurn() {
+        var gameId = document.getElementById('gameId').value.trim();
+
+        if (!gameId) {
+            alert('Game ID를 입력하세요.');
+            return;
+        }
+
+        log(`Sending Pass Turn...`);
+        stompClient.send(`/app/game/${gameId}/pass`, {}, {}); // userId는 서버에서 자동 추출
+    }
+
+    function sendPlayTurn() {
+        var gameId = document.getElementById('gameId').value.trim();
+        var tilesJson = document.getElementById('playTiles').value.trim();
+
+        if (!gameId) {
+            alert('Game ID를 입력하세요.');
+            return;
+        }
+
+        try {
+            var tiles = JSON.parse(tilesJson);
+            var payload = JSON.stringify({
+                tiles: tiles
+            });
+            log(`Sending Play Turn: ${payload}`);
+            stompClient.send(`/app/game/${gameId}/play`, {}, payload);
+        } catch (e) {
+            alert('타일 JSON 형식이 올바르지 않습니다.');
+        }
+    }
+</script>
+</body>
+</html>

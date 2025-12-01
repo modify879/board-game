@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+---
+
+###
+spring boot kotlin으로 ddd구조로 코드를 개발할거야
+구조는
+- domain
+- infrastructure
+- application
+- presentation
+이렇게 나눌거야
