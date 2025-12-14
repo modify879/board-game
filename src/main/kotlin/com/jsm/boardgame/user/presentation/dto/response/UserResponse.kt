@@ -1,4 +1,4 @@
-package com.jsm.boardgame.user.presentation.rest.dto
+package com.jsm.boardgame.user.presentation.dto.response
 
 import com.jsm.boardgame.user.application.port.out.RegisteredUserResult
 import com.jsm.boardgame.user.domain.model.UserRole
@@ -20,4 +20,3 @@ data class UserResponse(
         )
     }
 }
-

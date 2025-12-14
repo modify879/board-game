@@ -1,6 +1,6 @@
 package com.jsm.boardgame.user.application.service
 
-import com.jsm.boardgame.user.application.dto.UserDto
+import com.jsm.boardgame.user.application.dto.response.UserDto
 import com.jsm.boardgame.user.domain.model.User
 import com.jsm.boardgame.user.domain.model.UserId
 import com.jsm.boardgame.user.domain.repository.UserRepository

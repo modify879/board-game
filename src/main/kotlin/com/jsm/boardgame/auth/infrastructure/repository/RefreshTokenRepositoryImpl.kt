@@ -1,4 +1,4 @@
-package com.jsm.boardgame.auth.infrastructure.persistence.adapter
+package com.jsm.boardgame.auth.infrastructure.repository
 
 import com.jsm.boardgame.auth.domain.model.AuthUserId
 import com.jsm.boardgame.auth.domain.repository.RefreshTokenRepository
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
-class RefreshTokenRepositoryAdapter(
+class RefreshTokenRepositoryImpl(
     private val redisTemplate: StringRedisTemplate
 ) : RefreshTokenRepository {
 

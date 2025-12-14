@@ -1,6 +1,6 @@
-package com.jsm.boardgame.auth.presentation.rest.dto
+package com.jsm.boardgame.auth.presentation.dto.request
 
-import com.jsm.boardgame.auth.application.port.`in`.LoginCommand
+import com.jsm.boardgame.auth.application.port.`in`.command.LoginCommand
 import jakarta.validation.constraints.NotBlank
 
 data class LoginRequest(

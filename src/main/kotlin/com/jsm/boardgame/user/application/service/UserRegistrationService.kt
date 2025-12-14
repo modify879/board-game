@@ -1,7 +1,7 @@
 package com.jsm.boardgame.user.application.service
 
-import com.jsm.boardgame.user.application.port.`in`.RegisterUserCommand
 import com.jsm.boardgame.user.application.port.`in`.RegisterUserUseCase
+import com.jsm.boardgame.user.application.port.`in`.command.RegisterUserCommand
 import com.jsm.boardgame.user.application.port.out.RegisteredUserResult
 import com.jsm.boardgame.user.domain.exception.PasswordMismatchException
 import com.jsm.boardgame.user.domain.exception.UserAlreadyExistsException
@@ -39,4 +39,3 @@ class UserRegistrationService(
         return RegisteredUserResult.from(saved)
     }
 }
-

@@ -2,9 +2,9 @@ package com.jsm.boardgame.auth.presentation.rest
 
 import com.jsm.boardgame.auth.application.port.`in`.LoginUseCase
 import com.jsm.boardgame.auth.application.port.`in`.RefreshTokenUseCase
-import com.jsm.boardgame.auth.presentation.rest.dto.LoginRequest
-import com.jsm.boardgame.auth.presentation.rest.dto.RefreshTokenRequest
-import com.jsm.boardgame.auth.presentation.rest.dto.TokenResponse
+import com.jsm.boardgame.auth.presentation.dto.request.LoginRequest
+import com.jsm.boardgame.auth.presentation.dto.request.RefreshTokenRequest
+import com.jsm.boardgame.auth.presentation.dto.response.TokenResponse
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

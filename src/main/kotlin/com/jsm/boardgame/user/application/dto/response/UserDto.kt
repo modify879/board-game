@@ -1,4 +1,4 @@
-package com.jsm.boardgame.user.application.dto
+package com.jsm.boardgame.user.application.dto.response
 
 import com.jsm.boardgame.user.domain.model.UserRole
 
@@ -9,6 +9,3 @@ data class UserDto(
     val role: UserRole,
     val profile: String?,
 )
-
-
-

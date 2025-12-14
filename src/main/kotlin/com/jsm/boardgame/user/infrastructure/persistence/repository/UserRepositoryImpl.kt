@@ -1,14 +1,13 @@
-package com.jsm.boardgame.user.infrastructure.persistence.adapter
+package com.jsm.boardgame.user.infrastructure.persistence.repository
 
 import com.jsm.boardgame.user.domain.model.User
 import com.jsm.boardgame.user.domain.model.UserId
 import com.jsm.boardgame.user.domain.repository.UserRepository
 import com.jsm.boardgame.user.infrastructure.persistence.entity.UserJpaEntity
-import com.jsm.boardgame.user.infrastructure.persistence.repository.UserJpaRepository
 import org.springframework.stereotype.Component
 
 @Component
-class UserRepositoryAdapter(
+class UserRepositoryImpl(
     private val userJpaRepository: UserJpaRepository
 ) : UserRepository {
 
@@ -27,4 +26,3 @@ class UserRepositoryAdapter(
     override fun findByUsername(username: String): User? =
         userJpaRepository.findByUsername(username)?.toDomain()
 }
-

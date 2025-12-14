@@ -1,6 +1,6 @@
-package com.jsm.boardgame.user.presentation.rest.dto
+package com.jsm.boardgame.user.presentation.dto.request
 
-import com.jsm.boardgame.user.application.port.`in`.RegisterUserCommand
+import com.jsm.boardgame.user.application.port.`in`.command.RegisterUserCommand
 import com.jsm.boardgame.user.domain.model.UserRole
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -33,4 +33,3 @@ data class RegisterUserRequest(
         nickname = nickname,
     )
 }
-

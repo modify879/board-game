@@ -1,7 +1,7 @@
 package com.jsm.boardgame.auth.application.service
 
-import com.jsm.boardgame.auth.application.port.`in`.RefreshTokenCommand
 import com.jsm.boardgame.auth.application.port.`in`.RefreshTokenUseCase
+import com.jsm.boardgame.auth.application.port.`in`.command.RefreshTokenCommand
 import com.jsm.boardgame.auth.application.port.out.TokenResult
 import com.jsm.boardgame.auth.application.port.out.UserQueryPort
 import com.jsm.boardgame.auth.domain.exception.InvalidTokenException

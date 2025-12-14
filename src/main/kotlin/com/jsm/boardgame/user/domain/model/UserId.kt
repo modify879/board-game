@@ -9,4 +9,3 @@ value class UserId(val value: Long) {
         fun of(value: Long): UserId = UserId(value)
     }
 }
-

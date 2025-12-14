@@ -27,4 +27,3 @@ abstract class BaseTimeEntity(
         updatedAt = LocalDateTime.now()
     }
 }
-

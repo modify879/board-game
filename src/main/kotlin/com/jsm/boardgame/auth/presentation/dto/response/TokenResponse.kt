@@ -1,4 +1,4 @@
-package com.jsm.boardgame.auth.presentation.rest.dto
+package com.jsm.boardgame.auth.presentation.dto.response
 
 import com.jsm.boardgame.auth.application.port.out.TokenResult
 

@@ -9,4 +9,3 @@ value class EncodedPassword private constructor(private val value: String) {
         fun from(value: String) = EncodedPassword(value)
     }
 }
-

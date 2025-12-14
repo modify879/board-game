@@ -1,4 +1,4 @@
-package com.jsm.boardgame.auth.infrastructure.security
+package com.jsm.boardgame.auth.presentation.filter
 
 import com.jsm.boardgame.auth.infrastructure.jwt.JwtTokenProvider
 import jakarta.servlet.FilterChain

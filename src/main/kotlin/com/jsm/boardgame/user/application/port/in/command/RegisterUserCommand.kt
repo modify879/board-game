@@ -1,4 +1,4 @@
-package com.jsm.boardgame.user.application.port.`in`
+package com.jsm.boardgame.user.application.port.`in`.command
 
 import com.jsm.boardgame.user.domain.model.UserRole
 
@@ -9,4 +9,3 @@ data class RegisterUserCommand(
     val role: UserRole,
     val nickname: String,
 )
-
